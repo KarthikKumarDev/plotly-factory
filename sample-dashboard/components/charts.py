@@ -95,6 +95,93 @@ def pie_chart(
     return apply_theme(fig)
 
 
+def box_chart(
+    df: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    color: str | None = None,
+) -> go.Figure:
+    """Box plot for distribution by category. Id pattern: {page}-box-{suffix}."""
+    fig = px.box(df, x=x, y=y, color=color, color_discrete_sequence=CHART_COLORWAY)
+    fig.update_layout(
+        title=title,
+        xaxis_title=x.replace("_", " ").title(),
+        yaxis_title=y.replace("_", " ").title(),
+    )
+    return apply_theme(fig)
+
+
+def violin_chart(
+    df: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    color: str | None = None,
+) -> go.Figure:
+    """Violin plot for distribution shape by category. Id pattern: {page}-violin-{suffix}."""
+    fig = px.violin(df, x=x, y=y, color=color, box=True, color_discrete_sequence=CHART_COLORWAY)
+    fig.update_layout(
+        title=title,
+        xaxis_title=x.replace("_", " ").title(),
+        yaxis_title=y.replace("_", " ").title(),
+    )
+    return apply_theme(fig)
+
+
+def strip_chart(
+    df: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    color: str | None = None,
+) -> go.Figure:
+    """Strip plot: individual points by category. Id pattern: {page}-strip-{suffix}."""
+    fig = px.strip(df, x=x, y=y, color=color, stripmode="overlay", color_discrete_sequence=CHART_COLORWAY)
+    fig.update_layout(
+        title=title,
+        xaxis_title=x.replace("_", " ").title(),
+        yaxis_title=y.replace("_", " ").title(),
+    )
+    return apply_theme(fig)
+
+
+def histogram_chart(
+    df: pd.DataFrame,
+    x: str,
+    title: str,
+    color: str | None = None,
+    nbins: int | None = None,
+) -> go.Figure:
+    """Histogram for single-variable distribution. Id pattern: {page}-hist-{suffix}."""
+    fig = px.histogram(df, x=x, color=color, nbins=nbins, color_discrete_sequence=CHART_COLORWAY)
+    fig.update_layout(
+        title=title,
+        xaxis_title=x.replace("_", " ").title(),
+        yaxis_title="Count",
+    )
+    return apply_theme(fig)
+
+
+def heatmap_chart(
+    df: pd.DataFrame,
+    x: str,
+    y: str,
+    z: str,
+    title: str,
+) -> go.Figure:
+    """Heatmap for matrix / 2D density. Id pattern: {page}-heatmap-{suffix}."""
+    pivot = df.pivot_table(values=z, index=y, columns=x, aggfunc="sum")
+    fig = px.imshow(
+        pivot,
+        labels=dict(x=x.replace("_", " ").title(), y=y.replace("_", " ").title(), color=z),
+        color_continuous_scale=[LIGHT["chart_paper"], LIGHT["primary"]],
+        aspect="auto",
+    )
+    fig.update_layout(title=title)
+    return apply_theme(fig)
+
+
 def metric_card(
     title: str,
     value: str | int | float,

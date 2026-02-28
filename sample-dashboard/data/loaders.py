@@ -41,3 +41,32 @@ def load_pie_data() -> pd.DataFrame:
         "category": ["Electronics", "Clothing", "Home", "Sports", "Other"],
         "share": [32, 24, 18, 14, 12],
     })
+
+
+def load_box_data() -> pd.DataFrame:
+    """Sample data for box/violin (e.g. score distribution by team)."""
+    import random
+    random.seed(42)
+    teams = ["Alpha", "Beta", "Gamma", "Delta"]
+    data = []
+    for t in teams:
+        data.extend([{"team": t, "score": random.gauss(70 + teams.index(t) * 5, 12)} for _ in range(25)])
+    return pd.DataFrame(data)
+
+
+def load_histogram_data() -> pd.DataFrame:
+    """Sample data for histogram (e.g. response times)."""
+    import random
+    random.seed(43)
+    return pd.DataFrame({
+        "response_ms": [random.expovariate(1 / 200) for _ in range(200)],
+    })
+
+
+def load_heatmap_data() -> pd.DataFrame:
+    """Sample data for heatmap (e.g. value by row and column)."""
+    return pd.DataFrame({
+        "quarter": ["Q1", "Q1", "Q1", "Q2", "Q2", "Q2", "Q3", "Q3", "Q3", "Q4", "Q4", "Q4"],
+        "region": ["North", "South", "East", "North", "South", "East", "North", "South", "East", "North", "South", "East"],
+        "revenue": [80, 65, 90, 95, 70, 88, 102, 78, 95, 110, 85, 100],
+    })

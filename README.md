@@ -2,7 +2,9 @@
 
 Plotly-based dashboards and the context library that guides their development.
 
-![Charts section screenshot](sample-dashboard/charts-screenshot.png)
+| Charts | Insights |
+|--------|----------|
+| ![Charts section](sample-dashboard/assets/images/charts-screenshot-1.png) | ![Insights section](sample-dashboard/assets/images/charts-screenshot-2.png) |
 
 ## Quick start
 

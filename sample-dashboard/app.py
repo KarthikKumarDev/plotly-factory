@@ -16,7 +16,7 @@ import dash_bootstrap_components as dbc
 from dash import Dash, Input, Output, dcc, html
 
 from components.layout import make_navbar, make_page_container
-from pages import charts
+from pages import charts, insights
 
 # Bootstrap theme per docs/08-UI-ACCESSIBILITY
 app = Dash(
@@ -43,6 +43,8 @@ def render_page_content(pathname: str | None):
     """Route pathname to the correct page layout. See docs/03-ARCHITECTURE.md."""
     if pathname is None or pathname == "/" or pathname == "" or pathname == "/charts":
         return charts.layout()
+    if pathname == "/insights":
+        return insights.layout()
     return html.Div("Not found", className="text-muted")
 
 

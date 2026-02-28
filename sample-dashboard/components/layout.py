@@ -16,6 +16,7 @@ def make_navbar() -> dbc.Navbar:
                 dbc.Nav(
                     [
                         dbc.NavItem(dbc.NavLink("Charts", href="/", active="exact")),
+                        dbc.NavItem(dbc.NavLink("Insights", href="/insights", active="exact")),
                     ],
                     navbar=True,
                     className="ms-auto",
