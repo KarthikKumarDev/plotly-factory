@@ -1,0 +1,17 @@
+---
+description: Conventions for Dash assets (CSS, JS); apply when editing files in assets/
+globs: "assets/**/*"
+alwaysApply: false
+---
+
+# Dashboard assets rules
+
+When editing files under `assets/` (CSS, JavaScript, images):
+
+1. **Purpose**: Assets are used by Dash for styling and optional clientside behavior. Do not rely on inline hacks that break layout or accessibility without documenting them in the code or in `docs/`.
+2. **Styling**: Prefer shared classes and variables; align with `docs/08-UI-ACCESSIBILITY.md` for colors and contrast.
+3. **Scripts**: If adding or changing JS (e.g. for clientside callbacks), keep behavior minimal and document in `docs/05-DASH-GUIDE.md` or `docs/07-COMPONENTS.md` if it affects component contract.
+4. **Naming**: Follow project conventions; avoid global names that could collide (e.g. prefix or use a namespace).
+5. **Performance**: Avoid blocking the main thread; do not load large external resources without need.
+
+For full UI and a11y guidance, see `docs/08-UI-ACCESSIBILITY.md`. For component-level usage of assets, see `docs/07-COMPONENTS.md`.

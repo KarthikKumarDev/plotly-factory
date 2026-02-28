@@ -1,0 +1,19 @@
+---
+description: Plotly/Dash dashboard conventions and patterns; apply when editing Python dashboard code
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Plotly dashboard rules
+
+When editing Python files that define or support Dash apps:
+
+1. **Conventions**: Follow naming, IDs, and layout from `docs/02-CONVENTIONS.md`. Use existing component IDs; new IDs must match the documented pattern.
+2. **Architecture**: Layout, callbacks, and routing must align with `docs/03-ARCHITECTURE.md`. Avoid circular callback dependencies.
+3. **Plotly**: Use the APIs and patterns in `docs/04-PLOTLY-GUIDE.md` (e.g. preferred px vs go, theming, performance).
+4. **Dash**: Callbacks and components must follow `docs/05-DASH-GUIDE.md` (Input/Output/State, prevent_initial_call, no_update where needed).
+5. **Data**: Load, transform, and cache data as in `docs/06-DATA-PATTERNS.md`. Do not put large payloads in `dcc.Store` unnecessarily.
+6. **Reuse**: Prefer components and patterns from `docs/07-COMPONENTS.md` before introducing new ones. If you add a reusable piece, document it there.
+7. **Accessibility**: Apply `docs/08-UI-ACCESSIBILITY.md` for labels, contrast, and structure.
+
+Read the relevant doc(s) when adding a new page, callback, or chart. Update the context library docs when introducing a new pattern or component.
