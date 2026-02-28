@@ -21,11 +21,11 @@ Plotly-based dashboards and the context library that guides their development.
     └──────────────┬──────────────────┘
                    ▼
     ┌─────────────────────────────────┐
-    │ 2. Tell AI what you want        │
+    │ 2. Have AI read the docs        │
     └──────────────┬──────────────────┘
                    ▼
     ┌─────────────────────────────────┐
-    │ 3. Point AI at docs if needed   │
+    │ 3. Tell AI what you want        │
     └──────────────┬──────────────────┘
                    ▼
     ┌─────────────────────────────────┐
@@ -45,9 +45,9 @@ Follow these steps in detail:
 
 1. **Open the project in Cursor** (or your editor with the context docs available). The docs in `docs/` and the rules in `.cursor/rules/` give the AI consistent patterns for Plotly and Dash.
 
-2. **Tell the AI what you want** — e.g. “Plot a bar chart of sales by region from this CSV” or “Add a time series of daily active users to the dashboard.” Mention **Plotly** or **Dash** so the agent uses this stack.
+2. **Have the AI read the docs** — e.g. “Read the context library in `docs/` and `.cursor/rules/` first.” So the AI has the conventions before you state your request.
 
-3. **Point the AI at the right docs** — If the result doesn’t match your conventions, say e.g. “Follow the patterns in `docs/04-PLOTLY-GUIDE.md` and `docs/05-DASH-GUIDE.md`” or “Use the theme and layout from `docs/08-UI-ACCESSIBILITY.md`.” The numbered docs (01–11) are in recommended reading order.
+3. **Tell the AI what you want** — e.g. “Plot a bar chart of sales by region from this CSV” or “Add a time series of daily active users to the dashboard.” Mention **Plotly** or **Dash** so the agent uses this stack.
 
 4. **Provide data or a sample** — Share a small sample (e.g. CSV head, dict, or column names) so the AI can generate a real figure. If you already have a callback or layout, reference the file so outputs stay consistent with your app.
 
