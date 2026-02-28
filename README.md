@@ -2,10 +2,13 @@
 
 Plotly-based dashboards and the context library that guides their development.
 
+![Charts section screenshot](sample-dashboard/charts-screenshot.png)
+
 ## Quick start
 
 - **Install**: `pip install -r requirements.txt`  
 - **Run**: `python app.py` or `dash run app:app`  
+- **Sample dashboard**: From repo root, `pip install -r sample-dashboard/sample/requirements.txt` then `python run_sample.py` — see [sample-dashboard/sample/README.md](sample-dashboard/sample/README.md).  
 - **Tests**: `pytest` (or `pytest tests/`)
 
 ### Using the context factory to generate Plotly visualizations (end user)
@@ -148,6 +151,12 @@ Layout follows [docs/02-CONVENTIONS.md](docs/02-CONVENTIONS.md) and [docs/03-ARC
 ├── docs/                      # Context library (01–11)
 │   ├── 01-CONTEXT-LIBRARY-PLAN.md
 │   └── ...
+├── sample-dashboard/          # Sample dashboard (reference implementation)
+│   └── sample/
+│       ├── app.py
+│       ├── pages/, components/, data/, assets/, utils/
+│       └── README.md
+├── run_sample.py             # Launcher for sample dashboard
 └── .cursor/
     └── rules/                 # Plotly/Dash and assets rules
         ├── plotly-dashboards.mdc
