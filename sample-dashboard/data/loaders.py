@@ -4,9 +4,13 @@ replace with API/DB/file load per docs/06-DATA-PATTERNS.md.
 """
 from __future__ import annotations
 
+import random
+from functools import lru_cache
+
 import pandas as pd
 
 
+@lru_cache(maxsize=None)
 def load_sales_by_region() -> pd.DataFrame:
     """Load sample sales-by-region data. In production, load from API/file/DB."""
     return pd.DataFrame({
@@ -16,9 +20,10 @@ def load_sales_by_region() -> pd.DataFrame:
     })
 
 
+@lru_cache(maxsize=None)
 def load_timeseries() -> pd.DataFrame:
-    """Load sample time series data for line chart."""
-    dates = pd.date_range("2024-01-01", periods=12, freq="MS")
+    """Load sample time series data for line chart. month is pre-formatted as YYYY-MM string."""
+    dates = pd.date_range("2024-01-01", periods=12, freq="MS").strftime("%Y-%m")
     return pd.DataFrame({
         "month": dates,
         "revenue": [100, 115, 108, 125, 132, 128, 140, 138, 145, 150, 148, 160],
@@ -26,6 +31,7 @@ def load_timeseries() -> pd.DataFrame:
     })
 
 
+@lru_cache(maxsize=None)
 def load_scatter_data() -> pd.DataFrame:
     """Sample data for scatter (e.g. units vs revenue by segment)."""
     return pd.DataFrame({
@@ -35,6 +41,7 @@ def load_scatter_data() -> pd.DataFrame:
     })
 
 
+@lru_cache(maxsize=None)
 def load_pie_data() -> pd.DataFrame:
     """Sample data for pie (e.g. share by category)."""
     return pd.DataFrame({
@@ -43,26 +50,27 @@ def load_pie_data() -> pd.DataFrame:
     })
 
 
+@lru_cache(maxsize=None)
 def load_box_data() -> pd.DataFrame:
     """Sample data for box/violin (e.g. score distribution by team)."""
-    import random
     random.seed(42)
     teams = ["Alpha", "Beta", "Gamma", "Delta"]
     data = []
-    for t in teams:
-        data.extend([{"team": t, "score": random.gauss(70 + teams.index(t) * 5, 12)} for _ in range(25)])
+    for i, t in enumerate(teams):
+        data.extend([{"team": t, "score": random.gauss(70 + i * 5, 12)} for _ in range(25)])
     return pd.DataFrame(data)
 
 
+@lru_cache(maxsize=None)
 def load_histogram_data() -> pd.DataFrame:
     """Sample data for histogram (e.g. response times)."""
-    import random
     random.seed(43)
     return pd.DataFrame({
         "response_ms": [random.expovariate(1 / 200) for _ in range(200)],
     })
 
 
+@lru_cache(maxsize=None)
 def load_heatmap_data() -> pd.DataFrame:
     """Sample data for heatmap (e.g. value by row and column)."""
     return pd.DataFrame({

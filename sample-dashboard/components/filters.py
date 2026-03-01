@@ -21,7 +21,7 @@ def dropdown(
                 dbc.Label(label, html_for=component_id),
                 dcc.Dropdown(
                     id=component_id,
-                    options=[{"label": o["label"], "value": o["value"]} for o in options],
+                    options=options,
                     value=value,
                     placeholder=placeholder,
                     clearable=False,

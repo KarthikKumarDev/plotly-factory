@@ -14,8 +14,10 @@ from data.loaders import (
 )
 
 
-def layout(theme: str = "light") -> html.Div:
-    """Insights page: 2×2 layout of box, strip, histogram, heatmap."""
+def layout(theme: str = "light", config: dict | None = None) -> html.Div:
+    """Insights page: 2×2 layout of box, strip, histogram, heatmap. config from config-store controls chart behavior."""
+    config = config or {}
+    graph_config = {"displayModeBar": config.get("show_modebar", True)}
     df_box = load_box_data()
     df_hist = load_histogram_data()
     df_heat = load_heatmap_data()
@@ -27,6 +29,7 @@ def layout(theme: str = "light") -> html.Div:
         title="Score distribution by team",
         color="team",
         theme=theme,
+        config=config,
     )
     fig_strip = strip_chart(
         df_box,
@@ -35,6 +38,7 @@ def layout(theme: str = "light") -> html.Div:
         title="Scores by team (strip plot)",
         color="team",
         theme=theme,
+        config=config,
     )
     fig_hist = histogram_chart(
         df_hist,
@@ -42,6 +46,7 @@ def layout(theme: str = "light") -> html.Div:
         title="Response time distribution",
         nbins=24,
         theme=theme,
+        config=config,
     )
     fig_heat = heatmap_chart(
         df_heat,
@@ -50,6 +55,7 @@ def layout(theme: str = "light") -> html.Div:
         z="revenue",
         title="Revenue by quarter and region",
         theme=theme,
+        config=config,
     )
 
     return html.Div(
@@ -58,12 +64,12 @@ def layout(theme: str = "light") -> html.Div:
             dbc.Row(
                 [
                     dbc.Col(
-                        dcc.Graph(id="insights-box-tl", figure=fig_box),
+                        dcc.Graph(id="insights-box-team", figure=fig_box, config=graph_config),
                         md=6,
                         className="mb-3",
                     ),
                     dbc.Col(
-                        dcc.Graph(id="insights-strip-tr", figure=fig_strip),
+                        dcc.Graph(id="insights-strip-team", figure=fig_strip, config=graph_config),
                         md=6,
                         className="mb-3",
                     ),
@@ -72,12 +78,12 @@ def layout(theme: str = "light") -> html.Div:
             dbc.Row(
                 [
                     dbc.Col(
-                        dcc.Graph(id="insights-hist-bl", figure=fig_hist),
+                        dcc.Graph(id="insights-hist-response", figure=fig_hist, config=graph_config),
                         md=6,
                         className="mb-3",
                     ),
                     dbc.Col(
-                        dcc.Graph(id="insights-heatmap-br", figure=fig_heat),
+                        dcc.Graph(id="insights-heatmap-revenue", figure=fig_heat, config=graph_config),
                         md=6,
                         className="mb-3",
                     ),

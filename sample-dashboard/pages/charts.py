@@ -15,12 +15,12 @@ from data.loaders import (
 )
 
 
-def layout(theme: str = "light") -> html.Div:
-    """Charts page: 2×2 layout of bar, line, scatter, pie."""
+def layout(theme: str = "light", config: dict | None = None) -> html.Div:
+    """Charts page: 2×2 layout of bar, line, scatter, pie. config from config-store controls chart behavior."""
+    config = config or {}
+    graph_config = {"displayModeBar": config.get("show_modebar", True)}
     df_bar = load_sales_by_region()
     df_line = load_timeseries()
-    df_line = df_line.copy()
-    df_line["month"] = df_line["month"].dt.strftime("%Y-%m")
     df_scatter = load_scatter_data()
     df_pie = load_pie_data()
 
@@ -31,6 +31,7 @@ def layout(theme: str = "light") -> html.Div:
         title="Sales by region",
         color="region",
         theme=theme,
+        config=config,
     )
     fig_line = line_chart(
         df_line,
@@ -38,6 +39,7 @@ def layout(theme: str = "light") -> html.Div:
         y=["revenue", "costs"],
         title="Revenue vs costs",
         theme=theme,
+        config=config,
     )
     fig_scatter = scatter_chart(
         df_scatter,
@@ -46,6 +48,7 @@ def layout(theme: str = "light") -> html.Div:
         title="Units vs revenue by segment",
         color="segment",
         theme=theme,
+        config=config,
     )
     fig_pie = pie_chart(
         df_pie,
@@ -53,6 +56,7 @@ def layout(theme: str = "light") -> html.Div:
         values="share",
         title="Share by category",
         theme=theme,
+        config=config,
     )
 
     return html.Div(
@@ -61,12 +65,12 @@ def layout(theme: str = "light") -> html.Div:
             dbc.Row(
                 [
                     dbc.Col(
-                        dcc.Graph(id="charts-bar-tl", figure=fig_bar),
+                        dcc.Graph(id="charts-bar-region", figure=fig_bar, config=graph_config),
                         md=6,
                         className="mb-3",
                     ),
                     dbc.Col(
-                        dcc.Graph(id="charts-line-tr", figure=fig_line),
+                        dcc.Graph(id="charts-line-revenue", figure=fig_line, config=graph_config),
                         md=6,
                         className="mb-3",
                     ),
@@ -75,12 +79,12 @@ def layout(theme: str = "light") -> html.Div:
             dbc.Row(
                 [
                     dbc.Col(
-                        dcc.Graph(id="charts-scatter-bl", figure=fig_scatter),
+                        dcc.Graph(id="charts-scatter-units", figure=fig_scatter, config=graph_config),
                         md=6,
                         className="mb-3",
                     ),
                     dbc.Col(
-                        dcc.Graph(id="charts-pie-br", figure=fig_pie),
+                        dcc.Graph(id="charts-pie-category", figure=fig_pie, config=graph_config),
                         md=6,
                         className="mb-3",
                     ),

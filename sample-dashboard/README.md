@@ -4,11 +4,12 @@ A minimal Dash app that follows the context library in `../docs/`. Use it as a r
 
 ## What’s included
 
-- **App entry**: `app.py` — `dcc.Location`, navbar, page-content routing.
-- **Pages**: `pages/charts.py` (2×2 bar, line, scatter, pie).
-- **Components**: `components/charts.py` (bar, line, scatter, pie, metric card), `components/filters.py` (dropdown, refresh button), `components/layout.py` (navbar, container).
+- **App entry**: `app.py` — `dcc.Location`, navbar, `config-store`, page-content routing.
+- **Pages**: `pages/charts.py` (2×2 bar, line, scatter, pie), `pages/insights.py` (box, strip, histogram, heatmap), `pages/config.py` (control panel for chart behavior).
+- **Config**: `config-store` holds chart options (show legend, titles, data labels, grid). Config page toggles update the store; Charts and Insights pages read it and pass options into chart builders.
+- **Components**: `components/charts.py` (bar, line, scatter, pie, box, strip, histogram, heatmap, metric card), `components/layout.py` (navbar, container).
 - **Data**: `data/loaders.py` — in-memory sample data (replace with API/DB in production).
-- **Theme**: `utils/theme.py` and `assets/theme.css` — light palette per docs/08-UI-ACCESSIBILITY.md.
+- **Theme**: `utils/theme.py` and `assets/theme.css` — light/dark palette per docs/08-UI-ACCESSIBILITY.md.
 
 ## Run
 
@@ -35,9 +36,9 @@ Then open http://127.0.0.1:8050/
 
 ## Conventions used
 
-- **IDs**: `charts-bar-tl`, `charts-line-tr`, `charts-scatter-bl`, `charts-pie-br` (see docs/02-CONVENTIONS.md).
-- **Routing**: Single callback on `url.pathname` → `page-content` (docs/03-ARCHITECTURE.md).
-- **Charts**: Plotly Express + `apply_theme()` for paper/plot colors and colorway (docs/04-PLOTLY-GUIDE.md, 08-UI-ACCESSIBILITY.md).
+- **IDs**: Chart IDs like `charts-bar-tl`, `insights-box-tl`; config toggles `config-show-legend`, `config-show-titles`, etc. (docs/02-CONVENTIONS.md).
+- **Routing**: Callback on `url.pathname`, `theme-store`, `config-store` → `page-content` (docs/03-ARCHITECTURE.md).
+- **Charts**: Plotly Express + `apply_theme(fig, theme, config)` for theme and behavior (legend, titles, data labels, grid) from config-store (docs/04-PLOTLY-GUIDE.md, 08-UI-ACCESSIBILITY.md).
 
 ## Extending
 
