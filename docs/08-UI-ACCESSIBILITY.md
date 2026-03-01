@@ -53,8 +53,10 @@ Support **light** and **dark** themes with separate palettes. One active theme a
 | Rule | Action |
 |------|--------|
 | **Storage** | `dcc.Store(id="theme-mode", data="light")` or `"dark"`; or read `prefers-color-scheme`. |
-| **Apply** | Set `data-theme="light"` or `data-theme="dark"` on root container; style via CSS `[data-theme="light"]` / `[data-theme="dark"]`. |
-| **Control** | Toggle (switch or dropdown) updates Store and triggers callback or clientside refresh of layout and charts. |
+| **Apply** | Set `data-theme="light"` or `data-theme="dark"` on root container; or a wrapper class `theme-light` / `theme-dark`. Style via CSS `[data-theme="light"]` / `[data-theme="dark"]` or `.theme-light` / `.theme-dark`. |
+| **Control** | Toggle (switch or dropdown) updates Store and wrapper class; callback refreshes layout and charts with active theme. |
+| **Clear active state** | Make it obvious which theme is selected. Use distinct classes for the two labels (e.g. `navbar-theme-label-light`, `navbar-theme-label-dark`) and CSS `:has(.form-check-input:checked)` so the **active** label is bold and the inactive one muted (e.g. `opacity: 0.5`). This keeps the indication readable in both light and dark mode. |
+| **Visibility in dark mode** | In dark theme, the toggle pill and switch must stay clearly visible: sufficient contrast for the pill (e.g. dark semi-transparent background, light border), and for the switch track/thumb (e.g. dark track, white thumb when checked; optional inset shadow on the track so thumb position is obvious). Ensure focus ring is visible in both themes. |
 
 ### Light theme palette (exact values — rich royal pastels)
 
@@ -155,7 +157,7 @@ Support **light** and **dark** themes with separate palettes. One active theme a
 ## 9. Checklist
 
 - [ ] Single palette per theme; no one-off colors
-- [ ] Light and dark palettes in use; theme switch works; charts use active theme
+- [ ] Light and dark palettes in use; theme switch works; charts use active theme; toggle shows clear active state (e.g. bold active label, muted inactive) and is visible in dark mode
 - [ ] One font stack and size scale; heading hierarchy correct
 - [ ] Grid and spacing scale consistent
 - [ ] Contrast ≥ 4.5:1 (normal) / ≥ 3:1 (large)

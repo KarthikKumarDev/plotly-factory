@@ -29,6 +29,7 @@ Filters and controls used across pages. Define in `components/filters.py` (or eq
 | **Dropdown (multi)** | Multi-select filter | `{page}-dropdown-multi-{name}` | Same; value is list. |
 | **Date range picker** | Start/end date filter | `{page}-date-range` | `dcc.DatePickerRange`; `Input(..., "start_date")`, `Input(..., "end_date")`. |
 | **Refresh button** | User-triggered data reload | `{page}-refresh-btn` | `Input(..., "n_clicks")` triggers reload; see [06-DATA-PATTERNS.md](06-DATA-PATTERNS.md) §5. |
+| **Theme toggle** | Light/dark theme switch | `theme-toggle` (switch), `theme-store` (Store) | Switch updates Store and wrapper class (`theme-light` / `theme-dark`); use distinct label classes (e.g. `navbar-theme-label-light`, `navbar-theme-label-dark`) and CSS `:has(.form-check-input:checked)` so the active label is bold and visible in both themes. See [08-UI-ACCESSIBILITY.md](08-UI-ACCESSIBILITY.md) §2 Theme switch. |
 
 When adding a control, add a row here with id pattern and how callbacks use it (Input/Output/State).
 
