@@ -29,22 +29,41 @@ app = Dash(
 app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=False),
-        make_navbar(),
-        make_page_container(html.Div(id="page-content")),
+        html.Div(
+            [
+                make_navbar(),
+                make_page_container(html.Div(id="page-content")),
+            ],
+            id="theme-wrapper",
+            className="theme-light",
+        ),
     ]
 )
 
 
 @app.callback(
+    Output("theme-store", "data"),
+    Output("theme-wrapper", "className"),
+    Input("theme-toggle", "value"),
+)
+def sync_theme(toggle_on: bool | None) -> tuple[str, str]:
+    """Keep theme Store and wrapper class in sync. See docs/08-UI-ACCESSIBILITY.md §2."""
+    theme = "dark" if toggle_on else "light"
+    return theme, "theme-dark" if theme == "dark" else "theme-light"
+
+
+@app.callback(
     Output("page-content", "children"),
     Input("url", "pathname"),
+    Input("theme-store", "data"),
 )
-def render_page_content(pathname: str | None):
-    """Route pathname to the correct page layout. See docs/03-ARCHITECTURE.md."""
+def render_page_content(pathname: str | None, theme: str | None):
+    """Route pathname to the correct page layout; pass theme for light/dark charts."""
+    theme = theme or "light"
     if pathname is None or pathname == "/" or pathname == "" or pathname == "/charts":
-        return charts.layout()
+        return charts.layout(theme)
     if pathname == "/insights":
-        return insights.layout()
+        return insights.layout(theme)
     return html.Div("Not found", className="text-muted")
 
 

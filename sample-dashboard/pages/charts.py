@@ -15,7 +15,7 @@ from data.loaders import (
 )
 
 
-def layout() -> html.Div:
+def layout(theme: str = "light") -> html.Div:
     """Charts page: 2×2 layout of bar, line, scatter, pie."""
     df_bar = load_sales_by_region()
     df_line = load_timeseries()
@@ -30,12 +30,14 @@ def layout() -> html.Div:
         y="sales",
         title="Sales by region",
         color="region",
+        theme=theme,
     )
     fig_line = line_chart(
         df_line,
         x="month",
         y=["revenue", "costs"],
         title="Revenue vs costs",
+        theme=theme,
     )
     fig_scatter = scatter_chart(
         df_scatter,
@@ -43,12 +45,14 @@ def layout() -> html.Div:
         y="revenue",
         title="Units vs revenue by segment",
         color="segment",
+        theme=theme,
     )
     fig_pie = pie_chart(
         df_pie,
         names="category",
         values="share",
         title="Share by category",
+        theme=theme,
     )
 
     return html.Div(

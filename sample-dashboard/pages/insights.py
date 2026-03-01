@@ -14,8 +14,8 @@ from data.loaders import (
 )
 
 
-def layout() -> html.Div:
-    """Insights page: 2×2 layout of box, violin, histogram, heatmap."""
+def layout(theme: str = "light") -> html.Div:
+    """Insights page: 2×2 layout of box, strip, histogram, heatmap."""
     df_box = load_box_data()
     df_hist = load_histogram_data()
     df_heat = load_heatmap_data()
@@ -26,6 +26,7 @@ def layout() -> html.Div:
         y="score",
         title="Score distribution by team",
         color="team",
+        theme=theme,
     )
     fig_strip = strip_chart(
         df_box,
@@ -33,12 +34,14 @@ def layout() -> html.Div:
         y="score",
         title="Scores by team (strip plot)",
         color="team",
+        theme=theme,
     )
     fig_hist = histogram_chart(
         df_hist,
         x="response_ms",
         title="Response time distribution",
         nbins=24,
+        theme=theme,
     )
     fig_heat = heatmap_chart(
         df_heat,
@@ -46,6 +49,7 @@ def layout() -> html.Div:
         y="region",
         z="revenue",
         title="Revenue by quarter and region",
+        theme=theme,
     )
 
     return html.Div(
