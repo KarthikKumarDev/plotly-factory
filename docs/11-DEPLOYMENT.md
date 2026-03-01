@@ -40,7 +40,19 @@ Then open `http://127.0.0.1:8050`.
 | **Reverse proxy** | nginx or similar | Proxy to the app; set timeouts and static file handling as needed. |
 | **Env vars** | Set all required vars in the environment | No defaults for secrets. Document below. |
 
-### Required env vars (document per app)
+### 2.1 Environment file and secure credentials
+
+Use an env file in development so the dashboard gets credentials without hardcoding. In production, set variables via the platform or a secrets manager; do not rely on a committed `.env` file.
+
+| Rule | Action |
+|------|--------|
+| **Development** | Use `.env` at project root; load with `python-dotenv` at app startup. See [06-DATA-PATTERNS.md](06-DATA-PATTERNS.md) §1.2. Copy `.env.example` to `.env` and fill in real values locally. |
+| **Do not commit** | Add `.env`, `.env.local`, `.env.*.local` to `.gitignore`. Never commit files that contain passwords, API keys, or tokens. |
+| **.env.example** | Commit `.env.example` with variable names and placeholder or empty values (and comments). Document each var so the team knows what to set. |
+| **Production** | Do not deploy a `.env` file. Set env vars via the process manager (e.g. `Environment=` in systemd), Docker (`-e` or `--env-file` from a secure store), or a secrets manager (e.g. AWS Secrets Manager, HashiCorp Vault). Inject at runtime. |
+| **Validation** | Optionally at startup, check that required vars are set (e.g. `if not os.getenv("PGPASSWORD"): log.warning("PGPASSWORD not set")`) and fail fast or show a clear error so the dashboard does not run with missing config. |
+
+### 2.2 Required env vars (document per app)
 
 | Var | Purpose | Example |
 |-----|--------|---------|
@@ -76,7 +88,7 @@ Add or remove rows per app. Do not hardcode these in code.
 
 Before considering deployment done:
 
-- [ ] Required env vars listed in this doc; none hardcoded
+- [ ] `.env.example` committed; `.env` in `.gitignore`; required env vars listed in this doc; none hardcoded
 - [ ] `debug=False` (or omitted) in production
 - [ ] Static assets and favicon served (via app or reverse proxy)
 - [ ] Run command and port documented in README and this doc

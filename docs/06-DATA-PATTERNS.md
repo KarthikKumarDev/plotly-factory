@@ -11,8 +11,64 @@ Rules for loading, transforming, caching, and passing data into charts and callb
 | **API** | `requests.get()` or `httpx.get()`; parse JSON. Use env/config for base URL. | Live or near-live data; external service. |
 | **File (CSV, Parquet, etc.)** | `pd.read_csv()`, `pd.read_parquet()` from path (config or known location). | Static or batch data; local/served files. |
 | **Database** | SQL driver or ORM (e.g. `sqlalchemy`, `psycopg2`); use connection from config. | Structured data; queries with filters. |
+| **Google Sheets** | `gspread` with service account auth; open by sheet ID/URL, read range or `get_all_records()` → DataFrame. | Tabular data in a sheet; lightweight or shared inputs. See §1.1. |
 
 Document each source and its config (URL, path, credentials) in this doc or in [11-DEPLOYMENT.md](11-DEPLOYMENT.md). Do not hardcode URLs or secrets.
+
+### 1.1 Connecting to data sources
+
+Use a single place for connection config (e.g. `utils/config.py` or env vars); create connections per request or use a connection pool where the driver supports it. Never hardcode credentials.
+
+| Source | Library / driver | Connection pattern | Config (env) | Notes |
+|--------|------------------|--------------------|-------------|--------|
+| **MySQL** | `mysql-connector-python`, `pymysql`, or SQLAlchemy `mysql+pymysql://` | Connection string from env; use context manager or pool. | `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE` | Prefer parameterized queries; set `connect_timeout`. |
+| **PostgreSQL** | `psycopg2` or SQLAlchemy `postgresql://` | Same as above; connection string or separate host/port/user/password/dbname. | `PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD`, `PGDATABASE` (or `DATABASE_URL`) | Use server-side cursors for large result sets. |
+| **ClickHouse** | `clickhouse-connect` or `clickhouse-driver` | Client from config; execute queries, return results as list/dict or pandas. | `CLICKHOUSE_HOST`, `CLICKHOUSE_PORT`, `CLICKHOUSE_USER`, `CLICKHOUSE_PASSWORD`, `CLICKHOUSE_DATABASE` | Good for analytics; keep queries selective and use aggregations. |
+| **Snowflake** | `snowflake-connector-python` or SQLAlchemy `snowflake://` | Connector with account, user, password, role, warehouse, database, schema from config. | `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD`, `SNOWFLAKE_WAREHOUSE`, `SNOWFLAKE_DATABASE`, `SNOWFLAKE_SCHEMA` | Use warehouse and schema; avoid huge unbounded SELECTs. |
+| **Redis** | `redis` (pyredis) | `redis.Redis(host=..., port=..., password=..., decode_responses=True)` from config. | `REDIS_URL` or `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD` | Use for caching (get/set with TTL) or as shared state; not as primary query store for dashboards. |
+| **Elasticsearch** | `elasticsearch` (official client) | `Elasticsearch(hosts=[...], basic_auth=...)` from config. | `ES_HOST`, `ES_PORT`, `ES_USER`, `ES_PASSWORD` (or `ELASTICSEARCH_URL`) | Use for search/aggregations; map response to DataFrame for charts; set request timeouts. |
+| **Google Sheets** | `gspread` + `google-auth` | Authenticate with service account JSON (path or env); `gc.open_by_key(sheet_id)` or `open_by_url()`; `worksheet.get_all_records()` → DataFrame. | `GOOGLE_SHEETS_CREDENTIALS_JSON` (or `GOOGLE_APPLICATION_CREDENTIALS` path), `GOOGLE_SHEET_ID` (or sheet URL in config) | Share the sheet with the service account email. Cache sheet data with TTL; avoid per-request reads for large sheets. |
+
+**Rules for all sources:**
+
+- **Config** — Read host, port, credentials, and DB name from environment or a config module. Document required env vars in this doc or [11-DEPLOYMENT.md](11-DEPLOYMENT.md).
+- **Lifecycle** — Create the client/connection inside the callback or in a loader that’s called per request; or use a pool (e.g. SQLAlchemy pool) and reuse. Close connections or use context managers; do not leave long-lived connections open in global scope without a pool.
+- **Errors** — Wrap connect and query in try/except; log the error and return a user-visible message or `no_update`; use timeouts to avoid hanging.
+- **Secrets** — Never commit credentials. Use env vars or a secrets manager; reference in deployment docs only by variable name.
+
+### 1.2 Environment file and credential configuration
+
+Use an environment file so the dashboard can load credentials and config securely without hardcoding. Follow these so the app works the same locally and in deployment while keeping secrets out of the repo.
+
+| Rule | Action |
+|------|--------|
+| **File location** | Use `.env` at the project root (or `apps/<name>/.env` for an app in `apps/`). Optionally use `.env.local` for overrides; load it after `.env` if present. |
+| **Load in app** | At app startup, call `load_dotenv()` from `python-dotenv` (e.g. in `app.py` or in `utils/config.py` before any connection is made). Use `load_dotenv(".env")` or `load_dotenv(Path(__file__).parent.parent / ".env")` so the path is explicit. |
+| **Single config module** | Read all env vars in one place (e.g. `utils/config.py`): `os.getenv("VAR_NAME")` or `os.environ.get("VAR_NAME", "default")`. Export a small set of variables or a config object so the rest of the app does not call `os.getenv` everywhere. |
+| **No secrets in code** | Never put passwords, API keys, or connection strings in source. Only variable names (e.g. `os.getenv("PGPASSWORD")`) may appear in code. |
+| **.env in .gitignore** | Ensure `.env`, `.env.local`, and `.env.*.local` are in `.gitignore` so they are never committed. |
+| **.env.example** | Commit a `.env.example` (or `.env.sample`) that lists every variable name with placeholder or empty values and short comments. No real secrets. New developers copy it to `.env` and fill in values. |
+
+**Example `.env.example`:**  
+The repo root contains a [`.env.example`](../.env.example) that lists env vars for **all** supported data sources (MySQL, PostgreSQL, ClickHouse, Snowflake, Redis, Elasticsearch, Google Sheets) plus app and API. Copy it to `.env` and set only the variables your dashboard uses.
+
+**Example loading in code (`utils/config.py`):**
+
+```python
+from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
+def get_db_url():
+    return os.getenv("DATABASE_URL") or (
+        f"postgresql://{os.getenv('PGUSER')}:{os.getenv('PGPASSWORD')}"
+        f"@{os.getenv('PGHOST')}:{os.getenv('PGPORT', '5432')}/{os.getenv('PGDATABASE')}"
+    )
+```
+
+For production and required vars, see [11-DEPLOYMENT.md](11-DEPLOYMENT.md) §2.1 and §2.2.
 
 ---
 

@@ -40,7 +40,9 @@ Thumbs.db
 
 # Project
 *.log
+.env
 .env.local
+.env.*.local
 .pytest_cache/
 .coverage
 htmlcov/
